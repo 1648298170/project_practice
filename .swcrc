@@ -1,0 +1,15 @@
+{
+    "$schema": "https://json.schemastore.org/swcrc",
+    "sourceMaps": true,//开启调试断点
+    "jsc": {
+      "parser": {
+        "syntax": "typescript",
+        "decorators": true,
+        "dynamicImport": true
+      },
+      "baseUrl": "./"
+    },
+    "minify": false
+  }
+  
+  

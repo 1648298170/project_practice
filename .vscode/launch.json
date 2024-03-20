@@ -1,0 +1,24 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",   // 调试器类型为 Node.js
+            "request": "launch",   // 启动方式为启动
+            "name": "NestJS Debug",   // 配置名称
+            "program": "${workspaceFolder}/node_modules/@nestjs/cli/bin/nest.js",   // NestJS CLI 的执行路径
+            "args": ["start","-b","swc", "-w"],   // 启动参数，启动 NestJS 项目并使用 --watch 监听文件更改
+            "runtimeArgs": ["--inspect"],   // 运行时参数，开启 Node.js 调试
+            "sourceMaps": true,   // 启用源映射，以便在 VSCode 中调试 TypeScript 源代码
+            "cwd": "${workspaceFolder}",   // 设置当前工作目录
+            "env": {
+              "NODE_ENV": "development"   // 设置环境变量，这里设置为开发环境
+              // "NODE_ENV": "production"   // 设置环境变量，这里设置为生产环境
+            },
+            "console": "integratedTerminal",   // 使用集成终端来显示控制台输出
+            "internalConsoleOptions": "neverOpen"   // 控制台不在 VSCode 中打开
+          }
+      ]
+}

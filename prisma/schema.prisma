@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+//数据模型api指南：https://prisma.yoga/reference/api-reference/prisma-schema-reference#%E6%95%B0%E6%8D%AE%E6%BA%90%EF%BC%88datasource%EF%BC%89
+
+model permissions {
+  permisId         Int                @id @default(autoincrement())
+  name             String             @unique(map: "name") @db.VarChar(50)
+  createBy         String?            @default(dbgenerated("(_utf8mb4\\'admin\\')")) @db.VarChar(50)
+  updateBy         String?            @default(dbgenerated("(_utf8mb4\\'admin\\')")) @db.VarChar(50)
+  createdAt        DateTime?          @default(dbgenerated("(now())")) @db.DateTime(0)
+  updatedAt        DateTime?          @default(dbgenerated("(now())")) @db.DateTime(0)
+  description      String?            @db.Text
+  role_permissions role_permissions[] @ignore
+}
+
+model post {
+  title     String
+  content   String?
+  published Boolean? @default(false)
+  authorId  Int?
+  postId    Int      @id @default(autoincrement())
+  createBy  String
+  createdAt DateTime @default(now())
+  updateBy  String
+  updatedAt DateTime
+  user      user?    @relation(fields: [authorId], references: [userId], map: "Post_authorId_fkey")
+
+  @@index([authorId], map: "Post_authorId_fkey")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model role_permissions {
+  role_id       Int?
+  permission_id Int?
+  roles         roles?       @relation(fields: [role_id], references: [roleId], onDelete: NoAction, onUpdate: NoAction, map: "role_permissions_ibfk_1")
+  permissions   permissions? @relation(fields: [permission_id], references: [permisId], onDelete: NoAction, onUpdate: NoAction, map: "role_permissions_ibfk_2")
+
+  @@index([permission_id], map: "permission_id")
+  @@index([role_id], map: "role_id")
+  @@ignore
+}
+
+model roles {
+  roleId           Int                @id @default(autoincrement())
+  name             String             @unique(map: "name") @db.VarChar(50)
+  createBy         String?            @default(dbgenerated("(_utf8mb4\\'admin\\')")) @db.VarChar(50)
+  updateBy         String?            @default(dbgenerated("(_utf8mb4\\'admin\\')")) @db.VarChar(50)
+  createdAt        DateTime?          @default(dbgenerated("(now())")) @db.DateTime(0)
+  updatedAt        DateTime?          @default(dbgenerated("(now())")) @db.DateTime(0)
+  description      String?            @db.Text
+  role_permissions role_permissions[] @ignore
+  user_role        user_role[]        @ignore
+}
+
+model user {
+  password  String
+  salt      String?
+  userId    Int         @id @default(autoincrement())
+  userName  String      @unique(map: "User_userName_key")
+  nickName  String?
+  createBy  String
+  createdAt DateTime    @default(now())
+  updateBy  String
+  updatedAt DateTime    @default(now())
+  post      post[]
+  user_role user_role[] @ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model user_role {
+  role_id Int?
+  user_id Int?
+  roles   roles? @relation(fields: [role_id], references: [roleId], onDelete: NoAction, onUpdate: NoAction, map: "user_role_ibfk_1")
+  user    user?  @relation(fields: [user_id], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "user_role_ibfk_2")
+
+  @@index([role_id], map: "role_id")
+  @@index([user_id], map: "user_id")
+  @@ignore
+}
