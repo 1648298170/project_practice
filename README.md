@@ -199,3 +199,75 @@ Nest is [MIT licensed](LICENSE).
 - [Prisam Cli](https://prisma.yoga/concepts/components/prisma-cli)
 - [Prisma Studio](https://prisma.yoga/concepts/components/prisma-studio)
 - [Prisam engines](https://prisma.yoga/concepts/components/prisma-engines)
+
+
+### 后台系统开发
+
+#### 1. 项目背景
+开发一个后台系统
+
+#### 2. 项目目标
+建立一个基于 NestJS、MySQL 和 Prisma 的后台，满足以下功能需求：
+- 根据组织架构和角色分配权限。
+
+#### 3. 功能模块
+
+1. **系统管理**
+   - 组织架构：允许添加、编辑、删除组织结构，并支持层级结构。
+   - 用户管理：允许添加、编辑、删除用户，并关联到相应的组织架构。
+   - 角色管理：允许添加、编辑、删除角色，并设置角色的权限。
+   - 字典管理：管理系统中需要用到的常量和枚举值。
+   - 日志管理：记录系统操作日志，包括用户操作、系统设置变更等。
+   - 系统设置：管理系统的各项设置。
+
+#### 4. 数据库设计
+
+- **组织架构表（Organization）**
+  - id（主键）
+  - name（组织名称）
+  - parentId（父组织ID）
+
+- **用户表（User）**
+  - id（主键）
+  - username（用户名）
+  - password（密码）
+  - email（邮箱）
+  - organizationId（所属组织ID，外键连接到Organization表）
+  - roleId（角色ID，外键连接到Role表）
+
+- **角色表（Role）**
+  - id（主键）
+  - name（角色名称）
+
+- **字典表（Dictionary）**
+  - id（主键）
+  - type（字典类型）
+  - key（字典键）
+  - value（字典值）
+
+- **日志表（Log）**
+  - id（主键）
+  - userId（操作用户ID，外键连接到User表）
+  - action（操作类型）
+  - description（操作描述）
+  - timestamp（时间戳）
+
+- **文件目录表（Directory）**
+  - id（主键）
+  - name（目录名称）
+  - parentId（父目录ID）
+  - type（目录类型：个人、项目、部门）
+
+- **权限表（Permission）**
+  - id（主键）
+  - roleId（角色ID）
+  - directoryId（目录ID）
+  - permissions（权限列表）
+
+#### 5. 技术栈
+- NestJS：基于 Node.js 的后端框架，用于构建服务器端应用。
+- MySQL：关系型数据库，用于存储用户信息、组织结构、权限配置等数据。
+- Prisma：ORM（Object-Relational Mapping）工具，用于简化数据库访问和操作。
+
+### 总结
+本项目旨在建立一个功能完备的FTP服务器，支持公司员工管理个人文件、共享文件，并根据公司组织结构和角色分配权限。通过NestJS、MySQL和Prisma等技术，实现系统的高效、稳定运行，并满足公司的业务需求。
