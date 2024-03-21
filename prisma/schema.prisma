@@ -9,76 +9,72 @@ datasource db {
 
 //数据模型api指南：https://prisma.yoga/reference/api-reference/prisma-schema-reference#%E6%95%B0%E6%8D%AE%E6%BA%90%EF%BC%88datasource%EF%BC%89
 
-model permissions {
-  permisId         Int                @id @default(autoincrement())
-  name             String             @unique(map: "name") @db.VarChar(50)
-  createBy         String?            @default(dbgenerated("(_utf8mb4\\'admin\\')")) @db.VarChar(50)
-  updateBy         String?            @default(dbgenerated("(_utf8mb4\\'admin\\')")) @db.VarChar(50)
-  createdAt        DateTime?          @default(dbgenerated("(now())")) @db.DateTime(0)
-  updatedAt        DateTime?          @default(dbgenerated("(now())")) @db.DateTime(0)
-  description      String?            @db.Text
-  role_permissions role_permissions[] @ignore
+model Menu {
+  menuId    Int     @id @default(autoincrement())
+  menuName  String  @unique(map: "name") @db.VarChar(50)
+  menuType  String  @db.VarChar(50)
+  createBy  String? @db.VarChar(50)
+  updateBy  String? @db.VarChar(50)
+  createdAt String? @default(dbgenerated("(now())")) @db.VarChar(50)
+  updatedAt String? @default(dbgenerated("(now())")) @db.VarChar(50)
+  parentId  Int     @db.Int
+  remark    String? @db.VarChar(500)
+  seq       Int?    @db.Int
+  status    Int?    @db.Int
+  icon      String? @db.VarChar(50)
+  perms     String? @db.VarChar(50)
+  deleted   Int     @default(0)
 }
 
-model post {
-  title     String
-  content   String?
-  published Boolean? @default(false)
-  authorId  Int?
-  postId    Int      @id @default(autoincrement())
-  createBy  String
-  createdAt DateTime @default(now())
-  updateBy  String
-  updatedAt DateTime
-  user      user?    @relation(fields: [authorId], references: [userId], map: "Post_authorId_fkey")
-
-  @@index([authorId], map: "Post_authorId_fkey")
+model Role {
+  roleId    Int        @id @default(autoincrement())
+  roleName  String     @unique(map: "roleName") @db.VarChar(50)
+  createBy  String?    @db.VarChar(50)
+  updateBy  String?    @db.VarChar(50)
+  createdAt String?    @default(dbgenerated("(now())")) @db.VarChar(50)
+  updatedAt String?    @default(dbgenerated("(now())")) @db.VarChar(50)
+  isAdmin   Int?       @default(0) @db.Int
+  remark    String?    @db.VarChar(500)
+  deleted   Int?       @default(0) @db.Int
+  seq       Int?       @default(0) @db.Int
+  status    Int?       @default(0) @db.Int
+  roleList  roleList[] @ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model role_permissions {
-  role_id       Int?
-  permission_id Int?
-  roles         roles?       @relation(fields: [role_id], references: [roleId], onDelete: NoAction, onUpdate: NoAction, map: "role_permissions_ibfk_1")
-  permissions   permissions? @relation(fields: [permission_id], references: [permisId], onDelete: NoAction, onUpdate: NoAction, map: "role_permissions_ibfk_2")
+model User {
+  password     String
+  salt         String?
+  email        String?
+  sex          Int?
+  tel          String?
+  status       Int?       @default(0) @db.Int
+  nickName     String?
+  name         String?
+  loginIp      String?
+  loginTime    String?
+  wxOpenid     String?
+  wxSessionKey String?
+  remark       String?
+  deleted      Int        @default(0) @db.Int
+  orgId        Int
+  orgName      String
+  userId       Int        @id @default(autoincrement())
+  userName     String     @unique(map: "User_userName_key")
+  createBy     String
+  createdAt    String     @default("(now())")
+  updateBy     String
+  updatedAt    String     @default("(now())")
+  roleList     roleList[] @ignore
 
-  @@index([permission_id], map: "permission_id")
-  @@index([role_id], map: "role_id")
-  @@ignore
-}
-
-model roles {
-  roleId           Int                @id @default(autoincrement())
-  name             String             @unique(map: "name") @db.VarChar(50)
-  createBy         String?            @default(dbgenerated("(_utf8mb4\\'admin\\')")) @db.VarChar(50)
-  updateBy         String?            @default(dbgenerated("(_utf8mb4\\'admin\\')")) @db.VarChar(50)
-  createdAt        DateTime?          @default(dbgenerated("(now())")) @db.DateTime(0)
-  updatedAt        DateTime?          @default(dbgenerated("(now())")) @db.DateTime(0)
-  description      String?            @db.Text
-  role_permissions role_permissions[] @ignore
-  user_role        user_role[]        @ignore
-}
-
-model user {
-  password  String
-  salt      String?
-  userId    Int         @id @default(autoincrement())
-  userName  String      @unique(map: "User_userName_key")
-  nickName  String?
-  createBy  String
-  createdAt DateTime    @default(now())
-  updateBy  String
-  updatedAt DateTime    @default(now())
-  post      post[]
-  user_role user_role[] @ignore
+  @@map("user")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model user_role {
+model roleList {
   role_id Int?
   user_id Int?
-  roles   roles? @relation(fields: [role_id], references: [roleId], onDelete: NoAction, onUpdate: NoAction, map: "user_role_ibfk_1")
-  user    user?  @relation(fields: [user_id], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "user_role_ibfk_2")
+  roles   Role? @relation(fields: [role_id], references: [roleId], onDelete: NoAction, onUpdate: NoAction, map: "user_role_ibfk_1")
+  user    User? @relation(fields: [user_id], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "user_role_ibfk_2")
 
   @@index([role_id], map: "role_id")
   @@index([user_id], map: "user_id")

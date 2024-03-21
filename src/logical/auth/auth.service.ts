@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { user } from '@prisma/client';
+import { User } from '@prisma/client';
 import { UserService } from '../../resource/user/user.service';
 import { encryptPassword } from '../../utils/cryptogram';
 import { jwtConstants } from './constants';
@@ -51,7 +51,7 @@ export class AuthService {
      * jwt验证-step 3：处理jwt验证
      * @description 生成token
      **/ 
-    async certificate(user: user) {
+    async certificate(user: User) {
         delete user.password;
         delete user.salt;
         console.log("操作账号信息->",user)

@@ -1,8 +1,0 @@
--- AlterTable
-ALTER TABLE `post` ALTER COLUMN `createBy` DROP DEFAULT,
-    ALTER COLUMN `updateBy` DROP DEFAULT,
-    ALTER COLUMN `updatedAt` DROP DEFAULT;
-
--- AlterTable
-ALTER TABLE `user` ALTER COLUMN `createBy` DROP DEFAULT,
-    ALTER COLUMN `updateBy` DROP DEFAULT;

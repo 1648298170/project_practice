@@ -7,7 +7,7 @@ import { TransformInterceptor } from './interceptor/transform/transform.intercep
 import { ValidationPipe } from '@nestjs/common';
 import metadata from './metadata';
 
-const port = 3000;
+const port = 3001;
 
 async function bootstrap() {
   console.log(`Starting server env....... ${process.env.NODE_ENV}`);
@@ -20,16 +20,16 @@ async function bootstrap() {
     .setTitle('nestjs-api-文档')//文档标题
     .setDescription('The cats API description')//文档描述
     .setVersion('1.0')//文档版本
-    .addBasicAuth({
-      type: 'http',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
-      name: 'JWT',
-      description: 'Enter JWT token',
-      in: 'header',
-    },
-      'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
-    )//鉴权，可以输入token
+    // .addBasicAuth({
+    //   type: 'http',
+    //   scheme: 'bearer',
+    //   bearerFormat: 'JWT',
+    //   name: 'JWT',
+    //   description: 'Enter JWT token',
+    //   in: 'header',
+    // },
+    //   'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
+    // )//鉴权，可以输入token
     // .addTag('cats')
     .build();//创建
   //https://nest.nodejs.cn/openapi/cli-plugin

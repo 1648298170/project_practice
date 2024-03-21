@@ -223,46 +223,140 @@ Nest is [MIT licensed](LICENSE).
 #### 4. 数据库设计
 
 - **组织架构表（Organization）**
-  - id（主键）
-  - name（组织名称）
-  - parentId（父组织ID）
+  - parentId *string* （父组织ID）
+  - orgId *int* (组织ID 主键)
+  - orgName *string* (组织名称)
+  - updatedAt *string(date-time)* (更新时间)
+  - createdAt *string(date-time)* (创建时间)
+  - createBy *string* (创建人)
+  - updatedBy *string* (更新人)
+  - corporate *string* (企业法人)
+  - contact *string* (联系人)
+  - status *int* (状态)
+  - remark *string* (备注)
+  - seq *int* (排序)
+  - depth *int* (层级)
+  - type *int* (类型)
+  - deleted *int* (是否删除:0否,1是)
 
 - **用户表（User）**
-  - id（主键）
-  - username（用户名）
-  - password（密码）
-  - email（邮箱）
-  - organizationId（所属组织ID，外键连接到Organization表）
-  - roleId（角色ID，外键连接到Role表）
+  - userId *int*（主键）
+  - updatedAt *string(date-time)* (更新时间)
+  - createdAt *string(date-time)* (创建时间)
+  - createBy *string* (创建人)
+  - updatedBy *string* (更新人)
+  - username *string*（用户名）
+  - password *string*（密码）
+  - email *string*（邮箱）
+  - orgId *int*（所属组织ID，外键连接到Organization表）
+  - orgName *string*（所属组织名称）
+  - roleIdList *int[]*(角色ID列表，外键连接到Role表)
+  - roleNameList *string[]* (角色名称列表)
+  - salt *string* (加密盐)
+  - sex *int* (性别)
+  - tel *string* (电话)
+  - status *int* (状态)
+  - nickName *string* (昵称)
+  - name *string* (名称)
+  - deleted *int* (是否删除:0否,1是)
+  - loginIp *string* (最后登录IP)
+  - loginTime *string(date-time)* (最后登录时间)
+  - wxOpenid *string* (微信开放ID)
+  - wxSessionKey *string* (微信会话密钥)
+  - remark *string* (备注)
 
 - **角色表（Role）**
-  - id（主键）
-  - name（角色名称）
+  - updatedAt *string(date-time)* (更新时间)
+  - createdAt *string(date-time)* (创建时间)
+  - createBy *string* (创建人)
+  - updatedBy *string* (更新人)
+  - roleId *int* (主键)
+  - roleName *string* (角色名称)
+  - status *int* (状态)
+  - isAdmin *int* (是否为管理员:0否,1是)
+  - remark *string* (备注)
+  - seq *int* (排序)
+  - deleted *int* (是否删除:0否,1是)
+  
+- **菜单表（Menu）**
+  - menuId *int* (主键)
+  - menuName *string* (菜单名称)
+  - menuType *string* (菜单类型:M目录 C菜单 F按钮)
+  - updatedAt *string(date-time)* (更新时间)
+  - createdAt *string(date-time)* (创建时间)
+  - createBy *string* (创建人)
+  - updatedBy *string* (更新人)
+  - parentId *string* (父菜单ID)
+  - pathName *string* (路径名称)
+  - remark *string* (备注)
+  - seq *int* (排序)
+  - status *int* (状态)
+  - icon *string* (菜单图标)
+  - perms *string* (权限标识)
+  - deleted *int* (是否删除:0否,1是)
 
+- **系统设置（System）**
+  - configId（主键）
+  - configKey *string* （参数键名）
+  - configName *string* （参数名称）
+  - configType *int* （系统内置（0是 1否））
+  - configValue *string* （参数键值）
+  - deleted *int* (是否删除:0否,1是)
+  - updatedAt *string(date-time)* (更新时间)
+  - createdAt *string(date-time)* (创建时间)
+  - createBy *string* (创建人)
+  - updatedBy *string* (更新人)
+  - remark *string* (备注)
+  
 - **字典表（Dictionary）**
-  - id（主键）
-  - type（字典类型）
-  - key（字典键）
-  - value（字典值）
+  - deleted *int* 默认值为0（删除标记）
+  - cssClass *string*（样式属性（其他样式扩展））
+  - dictCode *int*（字典编码 主键）
+  - dictSort *int*（字典排序）
+  - dictType *string* （字典类型）
+  - isDefault *int*（是否默认 0是 1否）
+  - label *string*（字典标签）
+  - listClass *string*（表格回显样式）
+  - remark *string*（备注）
+  - value *string*（字典值）
+  - status *int*（状态）
+  - updatedAt *string(data-time)* (更新时间)
+  - createdAt *string(data-time)* (创建时间)
+  - createBy *string* (创建人)
+  - updatedBy *string* (更新人)
+  
+- **字典类型表（Dictionary）**
+  - dictId  *int* （主键）
+  - deleted *int* 默认值为0（删除标记）
+  - dictDataList *[{}]*（字典对象列表）））
+  - dictType *string* （字典类型）
+  - dictName *string*（字典名称）
+  - remark *string*（备注）
+  - status *int*（状态）
+  - updatedAt *string(data-time)* (更新时间)
+  - createdAt *string(data-time)* (创建时间)
+  - createBy *string* (创建人)
+  - updatedBy *string* (更新人)
 
 - **日志表（Log）**
-  - id（主键）
-  - userId（操作用户ID，外键连接到User表）
-  - action（操作类型）
-  - description（操作描述）
-  - timestamp（时间戳）
+  - operId *int*（主键）
+  - operIp *string*（操作IP地址）
+  - operLocation *string*（操作地点）
+  - operName *string*（操作人员）
+  - operTime *string(data-time)*（操作时间）
+  - operParam *string*（请求参数）
+  - operType *int* （操作类型 0其它 1后台用户 2手机端用户）
+  - operUrl *string*（请求URL）
+  - orgName *string*（部门名称）
+  - requestMethod *string*（请求方式）
+  - status *int*（操作状态 0正常 1异常）
+  - jsonResult *string*（返回参数）
+  - remark *string*（备注）
+  - type *int* 操作类型（0其它 1新增 2修改 3删除）
+  - errorMsg *string* （错误消息）
+  - jsonResult *string* （返回参数）
+  - method *string*（方法名称）
 
-- **文件目录表（Directory）**
-  - id（主键）
-  - name（目录名称）
-  - parentId（父目录ID）
-  - type（目录类型：个人、项目、部门）
-
-- **权限表（Permission）**
-  - id（主键）
-  - roleId（角色ID）
-  - directoryId（目录ID）
-  - permissions（权限列表）
 
 #### 5. 技术栈
 - NestJS：基于 Node.js 的后端框架，用于构建服务器端应用。

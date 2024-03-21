@@ -1,6 +1,6 @@
 import { Body, Injectable, Req, Res, Session } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { user, Prisma } from '@prisma/client';
+import { User, Prisma } from '@prisma/client';
 import { makeSalt, encryptPassword } from '../../utils/cryptogram';
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -10,12 +10,12 @@ export class UserService {
     constructor(private prisma: PrismaService) { }
     //查询某个用户信息
     async user(
-        userWhereUniqueInput: Prisma.userWhereUniqueInput,
-    ): Promise<user> {
+        UserWhereUniqueInput: Prisma.UserWhereUniqueInput,
+    ): Promise<User> {
         
         try {
             let user = await this.prisma.user.findUnique({
-                where: userWhereUniqueInput,
+                where: UserWhereUniqueInput,
             });
             return user;
         } catch (error) {
@@ -29,8 +29,8 @@ export class UserService {
         pageNo: number;
         pageSize: number;
         cursor?: number;
-        where?: Prisma.userWhereInput;
-    }): Promise<user[]> {
+        where?: Prisma.UserWhereInput;
+    }): Promise<User[]> {
         // 解构参数对象，提取参数值
         const { pageNo, pageSize, cursor, where } = params;
         try {
@@ -59,7 +59,7 @@ export class UserService {
         }
     }
     //添加用户
-    async createUser(data: Prisma.userCreateInput): Promise<CreateUserDto> {
+    async createUser(data: Prisma.UserCreateInput): Promise<CreateUserDto> {
         // 判断新增
         const user = await this.prisma.user.findUnique({
             where: {
@@ -84,9 +84,9 @@ export class UserService {
     }
     //更新用户信息
     async updateUser(params: {
-        where: Prisma.userWhereUniqueInput;
-        data: Prisma.userUpdateInput;
-    }): Promise<user> {
+        where: Prisma.UserWhereUniqueInput;
+        data: Prisma.UserUpdateInput;
+    }): Promise<User> {
         const { where, data } = params;
         // 判断是否修改密码
         if (data.password) {
@@ -108,7 +108,7 @@ export class UserService {
         }
     }
     //删除用户
-    async deleteUser(where: Prisma.userWhereUniqueInput): Promise<{ msg: string }> {
+    async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<{ msg: string }> {
         try {
             await this.prisma.user.delete({
                 where,

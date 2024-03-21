@@ -71,8 +71,6 @@ export class UserController {
         description: 'OK',
         type: [CreateUserDto],
     })
-    @ApiBearerAuth('JWT-auth')
-    @UseGuards(AuthGuard('jwt'))// 使用 JWT 验证守卫
     async getUserlist(
         @Query('pageNo') pageNo: string,
         @Query('pageSize') pageSize: string,
@@ -112,8 +110,6 @@ export class UserController {
         description: 'OK',
         type: CreateUserDto,
     })
-    @ApiBearerAuth('JWT-auth')// Swagger 标识需要携带 JWT Token
-    @UseGuards(AuthGuard('jwt'))// 使用 JWT 验证守卫
     async getUserById(@Query('userId') userId: number): Promise<UserInfo<CreateUserDto>> {
         if (!userId) {
             throw Error('userId 不存在')
@@ -134,8 +130,6 @@ export class UserController {
         description: '更新用户信息',
         type: CreateUserDto
     })
-    @ApiBearerAuth('JWT-auth')
-    @UseGuards(AuthGuard('jwt'))// 使用 JWT 验证守卫
     async updateUser(@Body() userData: CreateUserDto, @Req() ctx: Context): Promise<UserInfo<CreateUserDto>> {
         const { userName } = ctx.user;
         userData.updateBy = userName;
@@ -153,8 +147,6 @@ export class UserController {
         description: 'OK',
         type: CreateUserDto,
     })
-    // @ApiBearerAuth('JWT-auth')
-    // @UseGuards(AuthGuard('jwt'))// 使用 JWT 验证守卫
     async addUser(
         @Body() userData: Exclude<CreateUserDto, 'userId' | 'salt'>,
         @Req() ctx: Context
@@ -171,8 +163,6 @@ export class UserController {
      *deleteUser 删除用户
     */
     @Delete('delete')
-    @ApiBearerAuth('JWT-auth')
-    @UseGuards(AuthGuard('jwt'))// 使用 JWT 验证守卫
     async deleteUser(@Param('userId') userId: number): Promise<{ msg: string }> {
         const result = await this.userService.deleteUser(
             { userId: Number(userId) }
@@ -189,7 +179,6 @@ export class UserController {
     */
     // JWT验证 - Step 1: 用户请求登录
     @Post('login')
-
     async login(@Req() ctx: Context, @Session() session) {
         const loginParmas = ctx.body;
         console.log("ctx>.",loginParmas)
@@ -221,7 +210,6 @@ export class UserController {
      *logout 退出登录
     */
     @Post('logout')
-    @UseGuards(AuthGuard('jwt'))// 使用 JWT 验证守卫
     async logout(@Param() params, @Res() response,) {
         console.log("退出登录")
         return response.send({

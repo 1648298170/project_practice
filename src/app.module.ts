@@ -10,7 +10,7 @@ import { UserModule } from './resource/user/user.module';
 import { JwtService } from '@nestjs/jwt/dist';
 import { AuthModule } from './logical/auth/auth.module';
 import { LoggerMiddleware } from './middleware/logger/logger.middleware';
-import { PostModule } from './resource/post/post.module';
+import { RoleModule } from './resource/role/role.module';
 
 const ENV = process.env.NODE_ENV;
 console.log(`appModules env....${ ENV }`);
@@ -44,7 +44,7 @@ console.log(!ENV ? '.env.development' : `.env.${ENV}`);
     }),
     UserModule,
     AuthModule,
-    PostModule
+    RoleModule
   ],
   controllers: [UserController,AppController],
   providers: [AppService, PrismaService, UserService,JwtService],
