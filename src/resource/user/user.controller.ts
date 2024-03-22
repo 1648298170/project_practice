@@ -2,29 +2,19 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res, Sessi
 import { UserService } from './user.service';
 import * as svgCaptcha from 'svg-captcha';
 import { AuthService } from '../../logical/auth/auth.service';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiParam, ApiProperty, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiProperty, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { InterfaceFindAllObject } from 'global.interface';
 import { Context } from 'vm';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, LoginDto } from './dto/create-user.dto';
 // import { Context } from '@prisma/client/runtime/library';
 
-type UserInfo<T> = Exclude<T, 'password' | 'salt'>
-
-export class loginInfo {
-    @ApiProperty()
-    userName: string;
-
-    @ApiProperty()
-    password: string
-}
-
-
+type UserInfo<T> = Exclude<T, 'password' | 'salt'>;
 
 @Controller('user')
 @ApiTags('/user')
-@ApiBearerAuth('JWT-auth')
-@UseGuards(AuthGuard('jwt')) //验证携带的token
+// @ApiBearerAuth('JWT-auth')
+// @UseGuards(AuthGuard('jwt')) //验证携带的token
 export class UserController {
     constructor(
         private readonly userService: UserService,
@@ -143,17 +133,13 @@ export class UserController {
      * addUser 用户注册
     */
     @Post('add')
-    @ApiCreatedResponse({
-        description: 'OK',
-        type: CreateUserDto,
-    })
     async addUser(
-        @Body() userData: Exclude<CreateUserDto, 'userId' | 'salt'>,
+        @Body() addUserDto: Exclude<CreateUserDto, 'userId' | 'salt'>,
         @Req() ctx: Context
     ): Promise<UserInfo<CreateUserDto>> {
-        const { userName } = ctx.user;
-        userData.createBy = userName;
-        let result = await this.userService.createUser(userData);
+        // const { userName } = ctx.user;
+        // addUserDto.createBy = userName;
+        let result = await this.userService.createUser(addUserDto);
         delete result.password;
         delete result.salt;
         return result;
@@ -179,17 +165,17 @@ export class UserController {
     */
     // JWT验证 - Step 1: 用户请求登录
     @Post('login')
-    async login(@Req() ctx: Context, @Session() session) {
-        const loginParmas = ctx.body;
-        console.log("ctx>.",loginParmas)
-        if(!Object.keys(loginParmas).length) return {msg:"不能为空"}
+    async login(@Body() userLoignParams: LoginDto, @Session() session) {
+        // 验证用户名密码
+        console.log("ctx>.", userLoignParams)
+        if (!(userLoignParams && Object.keys(userLoignParams).length)) return { msg: "不能为空" }
         // 验证验证码
-        let result = await this.userService.verifyCode(loginParmas, session);
+        let result = await this.userService.verifyCode(userLoignParams, session);
         if (result.code !== 200) {
             return result;
         }
         // 验证用户名和密码是否正确
-        const authResult = await this.authService.validateUser(loginParmas.userName, loginParmas.
+        const authResult = await this.authService.validateUser(userLoignParams.userName, userLoignParams.
             password);
         switch (authResult.code) {
             case 1:

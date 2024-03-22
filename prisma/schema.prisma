@@ -38,7 +38,7 @@ model Role {
   deleted   Int?       @default(0) @db.Int
   seq       Int?       @default(0) @db.Int
   status    Int?       @default(0) @db.Int
-  roleList  roleList[] @ignore
+  roleList  UserRoles[] 
 }
 
 model User {
@@ -55,28 +55,26 @@ model User {
   wxOpenid     String?
   wxSessionKey String?
   remark       String?
-  deleted      Int        @default(0) @db.Int
-  orgId        Int
-  orgName      String
+  deleted      Int?        @default(0) @db.Int
+  orgId        Int?
+  orgName      String?
   userId       Int        @id @default(autoincrement())
-  userName     String     @unique(map: "User_userName_key")
-  createBy     String
-  createdAt    String     @default("(now())")
-  updateBy     String
-  updatedAt    String     @default("(now())")
-  roleList     roleList[] @ignore
+  userName     String?     @unique(map: "User_userName_key")
+  createBy     String?
+  createdAt    String?     @default("(now())")
+  updateBy     String?
+  updatedAt    String?     @default("(now())")
+  roleList     UserRoles[]
 
   @@map("user")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model roleList {
-  role_id Int?
-  user_id Int?
-  roles   Role? @relation(fields: [role_id], references: [roleId], onDelete: NoAction, onUpdate: NoAction, map: "user_role_ibfk_1")
-  user    User? @relation(fields: [user_id], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "user_role_ibfk_2")
-
-  @@index([role_id], map: "role_id")
-  @@index([user_id], map: "user_id")
-  @@ignore
+model UserRoles {
+  role       Role     @relation(fields: [roleId], references: [roleId], onDelete: NoAction, onUpdate: NoAction)
+  roleId     Int
+  user       User     @relation(fields: [userId], references: [userId], onDelete: NoAction, onUpdate: NoAction)
+  userId     Int
+  assignedAt DateTime? @default(now())
+  @@id([userId, roleId])
 }

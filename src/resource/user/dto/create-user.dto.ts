@@ -1,5 +1,6 @@
 
-import { IsNotEmpty, IsNumber, IsString, IsDateString } from "class-validator";
+import { PickType } from "@nestjs/swagger";
+import { IsNotEmpty, IsNumber, IsString, IsDateString, IsArray } from "class-validator";
 
 export class CreateUserDto {
   /**
@@ -76,4 +77,17 @@ export class CreateUserDto {
   @IsNumber()
   orgId: number;
 
+  /**
+    * 角色
+   */
+  @IsArray()
+  roleList: Array<number>;
+
+
+
+}
+
+//账号密码
+export class LoginDto extends PickType(CreateUserDto, ['userName', 'password'] as const) {
+  
 }

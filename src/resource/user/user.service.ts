@@ -2,8 +2,6 @@ import { Body, Injectable, Req, Res, Session } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { User, Prisma } from '@prisma/client';
 import { makeSalt, encryptPassword } from '../../utils/cryptogram';
-import { CreateUserDto } from './dto/create-user.dto';
-
 
 @Injectable()
 export class UserService {
@@ -12,11 +10,23 @@ export class UserService {
     async user(
         UserWhereUniqueInput: Prisma.UserWhereUniqueInput,
     ): Promise<User> {
-        
+
         try {
             let user = await this.prisma.user.findUnique({
                 where: UserWhereUniqueInput,
+                include:{
+                    roleList:{
+                        select:{
+                            roleId:true,
+                        }
+                    }
+                }
             });
+            if(user.roleList){
+                user.roleList = user.roleList.map(item=>{
+                    return item.roleId;
+                });
+            }
             return user;
         } catch (error) {
             throw error;
@@ -59,7 +69,7 @@ export class UserService {
         }
     }
     //添加用户
-    async createUser(data: Prisma.UserCreateInput): Promise<CreateUserDto> {
+    async createUser(data: Prisma.UserCreateInput): Promise<User> {
         // 判断新增
         const user = await this.prisma.user.findUnique({
             where: {
@@ -73,9 +83,23 @@ export class UserService {
         const hashPwd = encryptPassword(data.password, salt);
         data.password = hashPwd;
         data.salt = salt;
+        let list = []
+        if(data.roleList !== undefined){
+            for (let i = 0; i < data.roleList.length; i++) {
+                list.push({
+                    assignedAt: new Date(),
+                    roleId: data.roleList[i]
+                })
+            }
+        }
         try {
             let result = await this.prisma.user.create({
-                data,
+                data: {
+                    ...data,
+                    roleList: {
+                        create:list
+                    }
+                },
             });
             return result;
         } catch (error) {
@@ -94,7 +118,7 @@ export class UserService {
             const hashPwd = encryptPassword(data.password as string, salt);
             data.password = hashPwd;
         }
-        
+
         try {
             let res = await this.prisma.user.update({
                 data,
@@ -122,7 +146,7 @@ export class UserService {
     }
 
     //验证验证码
-    verifyCode(@Body() body, @Session() session) {
+    async verifyCode(@Body() body, @Session() session) {
         // if(!session.code){
         //     throw '没有传入cookie'
         // }
