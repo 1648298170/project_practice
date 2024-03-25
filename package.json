@@ -18,8 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:pull":"npx dotenv -e .env.development -- prisma db pull dev",
-    "prisma:push":"npx dotenv -e .env.development -- prisma db push dev",
+    "prisma:pull": "npx dotenv -e .env.development -- prisma db pull dev",
+    "prisma:push": "npx dotenv -e .env.development -- prisma db push dev",
     "migrate:dev": "npx dotenv -e .env.development -- prisma migrate dev --name init",
     "migrate:dev:create": "npx dotenv -e .env.development -- prisma migrate dev --name create-only --create-only",
     "prisma:deploy": "npx dotenv -e .env.production -- prisma migrate deploy",
@@ -103,5 +103,8 @@
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
+  },
+  "volta": {
+    "node": "18.19.1"
   }
 }
